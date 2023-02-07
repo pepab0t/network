@@ -1,0 +1,25 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block script %}
+    <script>var myGlobal = {
+            csrftoken: '{{csrf_token}}',
+            url_new_post: "{% url 'new_post'%}",
+            user: '{{user}}'
+        } 
+    </script>
+    <script src="{% static 'network/index.js'%}"></script>
+{% endblock %}
+
+{% block body %}
+    
+    {% if user.is_authenticated%}
+        <div id="new_post">
+        </div>
+    {% endif %}
+
+    <div id="posts">
+    </div>
+
+
+{% endblock %}
