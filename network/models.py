@@ -18,7 +18,8 @@ class Post(models.Model):
         return {
             "username": self.user.username,
             "text": self.text,
-            "created": self.created,
+            "created": self.created.strftime(r"%c"),
+            "likes": self.likes.count(),  # type: ignore
         }
 
 

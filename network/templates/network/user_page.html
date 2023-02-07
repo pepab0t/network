@@ -1,0 +1,30 @@
+{% extends 'network/layout.html' %}
+{% load static %}
+
+{% block user_info %}
+    <h2>{{viewed_user.username}}</h2>
+    <div>Followers</div>
+    <div>Following</div>
+    {% if user.is_authenticated %}
+        <button>Follow</button>
+    {% endif %}
+    <hr>
+{% endblock %}
+
+{% block body%}
+    <div id="user_posts">
+
+    </div>
+{% endblock%}
+
+{% block script %}
+    <script>
+        var myGlobal = {
+            {% if user.is_authenticated %}
+            user: '{{user}}',
+            {% endif %}
+            viewedUser: '{{viewed_user.username}}'
+        }
+    </script>
+    <script src="{% static 'network/user_page.js'%}"></script>
+{% endblock %}

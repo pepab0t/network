@@ -2,13 +2,19 @@
 {% load static %}
 
 {% block script %}
-    <script>var myGlobal = {
+    <script>
+        var myGlobal = {
             csrftoken: '{{csrf_token}}',
             url_new_post: "{% url 'new_post'%}",
+            {% if user.is_authenticated %}
             user: '{{user}}'
+            {% endif %}
         } 
     </script>
     <script src="{% static 'network/index.js'%}"></script>
+{% endblock %}
+
+{% block user_info %}
 {% endblock %}
 
 {% block body %}

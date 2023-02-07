@@ -51,9 +51,12 @@
       </div>
     </nav>
 
-    <div
-      class="body">
-      {% block body %} {% endblock %}
+    <div class="body">
+      {% block user_info %}
+      {% endblock %}
+      
+      {% block body %}
+      {% endblock %}
     </div>
   </body>
 </html>

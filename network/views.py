@@ -13,8 +13,27 @@ def index(request):
     return render(request, "network/index.html")
 
 
+def user_page(request, username: str):
+    user = User.objects.filter(username=username).first()
+
+    if user is None:
+        return JsonResponse({"error": f"user {username} does not exist"}, status=404)
+
+    return render(request, "network/user_page.html", {"viewed_user": user})
+
+
 def posts(request):
     posts = Post.objects.order_by("-created")
+    return JsonResponse([post.to_dict() for post in posts], status=200, safe=False)
+
+
+def user_posts(request, username: str):
+    user = User.objects.filter(username=username).first()
+
+    if user is None:
+        return JsonResponse({"error": f"user {username} does not exist"}, status=404)
+
+    posts = Post.objects.filter(user=user).order_by("-created").all()
     return JsonResponse([post.to_dict() for post in posts], status=200, safe=False)
 
 
