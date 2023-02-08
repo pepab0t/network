@@ -3,10 +3,10 @@
 
 {% block user_info %}
     <h2>{{viewed_user.username}}</h2>
-    <div>Followers</div>
-    <div>Following</div>
-    {% if user.is_authenticated %}
-        <button>Follow</button>
+    <div><p class="h6" id="followers">{{viewed_user.followers.count}} Followers</p></div>
+    <div><p class="h6" id="following">{{viewed_user.following.count}} Following</p></div>
+    {% if user.is_authenticated and viewed_user != user%}
+        <button class="btn btn-primary" id="btn_follow">Follow</button>
     {% endif %}
     <hr>
 {% endblock %}
@@ -23,8 +23,9 @@
             {% if user.is_authenticated %}
             user: '{{user}}',
             {% endif %}
-            viewedUser: '{{viewed_user.username}}'
+            viewedUser: '{{viewed_user.username}}',
+            viewedUserId: '{{viewed_user.id}}'
         }
     </script>
-    <script src="{% static 'network/user_page.js'%}"></script>
+    <script type="module" src="{% static 'network/user_page.js'%}"></script>
 {% endblock %}

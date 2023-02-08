@@ -11,15 +11,17 @@
             {% endif %}
         } 
     </script>
-    <script src="{% static 'network/index.js'%}"></script>
+    <script type="module" src="{% static script %}"></script>
 {% endblock %}
 
 {% block user_info %}
 {% endblock %}
 
 {% block body %}
+
+    <h2>{{title}}</h2>
     
-    {% if user.is_authenticated%}
+    {% if user.is_authenticated %}
         <div id="new_post">
         </div>
     {% endif %}

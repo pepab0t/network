@@ -1,47 +1,16 @@
-console.log('Javascript is Running');
+import { generateFetchPostsFn, generateRenderPostFn } from "./utils.js";
 
-
-function renderPost(post){
-    return `
-    <div class="card border-secondary mb-3" >
-        <div class="card-header">
-            <a href='http://localhost:8000/profile/${post.username}'>${post.username}</a>
-            &emsp;
-            <small>${post.created}</small>
-        </div>
-        <div class="card-body text-secondary">
-            <p class="card-title">${post.text}</p>
-        </div>
-        ${post.username === myGlobal.user ? '<a href="#">Edit</a>' : ''}
-        <div>
-            <div>
-                <p >comment</p>
-            </div>
-            ${ myGlobal.user !== undefined ?
-                `<form>
-                    <input type='text' placeholder='Write a comment..'>
-                    <input type='submit' value='Comment'>
-                </form>` : ""
-            }
-        </div>
-        <div>
-            ${(post.username !== myGlobal.user & myGlobal.user !== undefined) ? '<a href="#" class="btn btn-primary">Like</a>' : ''}
-            <span>${post.likes} ${post.likes===1 ? 'like': 'likes'}</span>
-        </div>
-    </div>
-    `;
-}
+const renderPost = generateRenderPostFn(myGlobal);
 
 function displayPosts(posts){
-    document.querySelector('#posts').innerHTML += posts.map(renderPost).join('');
+    if (posts.length === 0) {
+        document.querySelector('#posts').innerHTML += "There are any posts yet."
+    } else {
+        document.querySelector('#posts').innerHTML += posts.map(renderPost).join('');
+    }
 }
 
-async function fetchPosts(){
-    const posts = await fetch('http://localhost:8000/posts')
-                        .then(response => response.json());
-
-    return posts;
-}
+const fetchPosts = generateFetchPostsFn('http://localhost:8000/posts');
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -50,17 +19,18 @@ document.addEventListener('DOMContentLoaded', () => {
     
         function renderNewPostForm() {
             return `
-            <div>
+            <div class='card-body card border-secondary'>
                 <h3>New Post</h3>
-                <form method="POST" action=${myGlobal.url_new_post}>
+                <div id='message'></div>
+                <form method="POST" action=${myGlobal.url_new_post} id='form_new_post'>
                     <input type='hidden' name='csrfmiddlewaretoken' value='${myGlobal.csrftoken}'>
-                    <textarea id='post_text' name='post_text'></textarea>
+                    <textarea class='form-control' id='post_text' name='post_text'></textarea>
                     <br>
-                    <input type='submit' class='btn btn-primary' value='Create Post'></input>
+                    <div>
+                        <input type='submit' class='btn btn-primary' value='Create Post'></input>
+                    </div>
                 </form>
-                <div>
-                    <button id='btn_cancel' class='btn btn-primary'>Close</button>
-                </div>
+                <button id='btn_cancel' class='btn btn-primary'>Close</button>
             </div>
             `
         }
@@ -68,6 +38,14 @@ document.addEventListener('DOMContentLoaded', () => {
         function newPostForm(status) {
             if (status) {
                 divNewPost.innerHTML = renderNewPostForm();
+                document.querySelector('#form_new_post').onsubmit = () => {
+                    const postText = document.querySelector('#post_text');
+
+                    if (postText.value === null | postText.value.length === 0) {
+                        document.querySelector('#message').innerHTML = "<p style='color: red;'>Post cannot be empty.</p>";
+                        return false;
+                    }
+                }
                 document.querySelector('#btn_cancel').onclick = () => newPostForm(false) ;
             } else {
                 divNewPost.innerHTML = '<button class="btn btn-primary" id="btn_new_post">New Post</button>';
