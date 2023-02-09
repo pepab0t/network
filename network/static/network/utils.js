@@ -1,4 +1,19 @@
 
+function renderComments(comments) {
+    const renderComment = (c) => {
+        return `
+        <div class='d-flex'>
+            <a href="http://127.0.0.1:8000/profile/${c.user}">${c.user}</a>: 
+            <p>${c.text}</p>
+            <small>${c.created}</small>
+        </div>
+        `
+    }
+
+    return comments.map(renderComment).join('');
+}
+
+
 export function generateRenderPostFn(myGlobal){
     return (post) => {
         const userIsAuthor = () => post.username === myGlobal.user;
@@ -7,7 +22,7 @@ export function generateRenderPostFn(myGlobal){
         return `
         <div class="card border-secondary mb-3" >
             <div class="card-header">
-                <a href='http://localhost:8000/profile/${post.username}'>${post.username}</a>
+                <a href='http://127.0.0.1:8000/profile/${post.username}'>${post.username}</a>
                 &emsp;
                 <small>${post.created}</small>
             </div>
@@ -15,13 +30,14 @@ export function generateRenderPostFn(myGlobal){
                 <p class="card-text">${post.text}</p>
             </div>
             ${userIsAuthor() ? '<a href="#">Edit</a>' : ''}
-            <div>
+            <div class=''>
                 <div>
-                    <p >comment</p>
+                    ${renderComments(post.comments)}
                 </div>
                 ${ userAuthenticated() ?
-                    `<form>
-                        <input type='text' placeholder='Write a comment..'>
+                    `<form action="http://127.0.0.1:8000/comment/${post.id}" method="POST">
+                        <input type='hidden' name='csrfmiddlewaretoken' value='${myGlobal.csrftoken}'>
+                        <input type='text' name="comment_text" placeholder='Write a comment..'>
                         <input type='submit' value='Comment'>
                     </form>` : ""
                 }

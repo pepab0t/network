@@ -20,6 +20,7 @@
 {% block script %}
     <script>
         var myGlobal = {
+            csrftoken: '{{csrf_token}}',
             {% if user.is_authenticated %}
             user: '{{user}}',
             {% endif %}

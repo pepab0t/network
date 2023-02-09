@@ -10,7 +10,7 @@ function displayPosts(posts){
     }
 }
 
-const fetchPosts = generateFetchPostsFn('http://localhost:8000/posts');
+const fetchPosts = generateFetchPostsFn('http://127.0.0.1:8000/posts');
 
 document.addEventListener('DOMContentLoaded', () => {
 
