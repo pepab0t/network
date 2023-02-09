@@ -6,8 +6,6 @@ const fetchPosts = generateFetchPostsFn('http://127.0.0.1:8000/posts');
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    console.log(myGlobal);
-
     if (myGlobal.user){
         const divNewPost = document.querySelector('#new_post'); 
     

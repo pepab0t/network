@@ -129,6 +129,9 @@ def user_detail(request, username: str):
 
 @login_required
 def like(request, post_id: int):
+    if not request.method == 'POST':
+        return JsonResponse({"error": "Invalid request method"}, status=400)
+
     post = Post.objects.get(pk=post_id)
 
     like = Like.objects.filter(user=request.user, post=post).first()
@@ -137,7 +140,8 @@ def like(request, post_id: int):
         return JsonResponse(
             {
                 "message": f"Successfully added like to post {post}",
-                "likes": post.likes.count(),
+                "likes": post.likes.count(), # type: ignore
+                "liked": True
             },
             status=200,
         )
@@ -146,7 +150,8 @@ def like(request, post_id: int):
         return JsonResponse(
             {
                 "message": f"Successfully unliked post {post}",
-                "likes": post.likes.count(),
+                "likes": post.likes.count(), # type: ignore
+                "liked": False
             },
             status=200,
         )

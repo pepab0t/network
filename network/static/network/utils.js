@@ -50,12 +50,11 @@ function commentFormSubmit(form) {
         fetch(`http://127.0.0.1:8000/comments/${form.dataset.post_id}`)
         .then(response => response.json())
         .then(comments => {
-            document.querySelector('#comments').innerHTML = renderComments(comments, form.dataset.post_id, myGlobal);
+            document.querySelector(`#comments_post_${form.dataset.post_id}`).innerHTML = renderComments(comments, form.dataset.post_id, myGlobal);
             document.querySelector(`#${form.id}`).onsubmit = () => commentFormSubmit(form);
         })
     }
     )
-
     return false;
 }
 
@@ -66,7 +65,7 @@ export function displayPosts(posts, renderPost, postDivId = "posts"){
     } else {
         document.querySelector(`#${postDivId}`).innerHTML += posts.map(renderPost).join('');
     }
-    
+ 
     // add comment delete buttons actions
     document.querySelectorAll('button[id*=btn_delete_]')
     .forEach( (button) => {
@@ -117,7 +116,7 @@ export function generateRenderPostFn(){
                         </div>
                     </div>
                 </div> 
-                <div class='card-body' id='comments'>
+                <div class='card-body' id='comments_post_${post.id}'>
                     ${ renderComments(post.comments, post.id, myGlobal) }
                 </div>
                 <div>
