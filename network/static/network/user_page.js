@@ -1,15 +1,11 @@
-import { generateFetchPostsFn, generateRenderPostFn } from "./utils.js";
+import { displayPosts, generateFetchPostsFn, generateRenderPostFn } from "./utils.js";
 
-const renderPost = generateRenderPostFn(myGlobal);
-
-function displayPosts(posts){
-    document.querySelector('#user_posts').innerHTML += posts.map(renderPost).join('');
-}
+const renderPost = generateRenderPostFn();
 
 const fetchPosts = generateFetchPostsFn(`http://127.0.0.1:8000/posts/${myGlobal.viewedUser}`);
 
 document.addEventListener('DOMContentLoaded', () => {
-    fetchPosts().then(displayPosts);
+    fetchPosts().then(posts => displayPosts(posts, renderPost, "user_posts"));
 
     fetch(`http://127.0.0.1:8000/profile/${myGlobal.viewedUser}/detail`)
     .then(response => response.json())

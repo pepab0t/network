@@ -1,18 +1,12 @@
-import { generateFetchPostsFn, generateRenderPostFn } from "./utils.js";
+import { displayPosts, generateFetchPostsFn, generateRenderPostFn } from "./utils.js";
 
-const renderPost = generateRenderPostFn(myGlobal);
-
-function displayPosts(posts){
-    if (posts.length === 0) {
-        document.querySelector('#posts').innerHTML += "There are any posts yet."
-    } else {
-        document.querySelector('#posts').innerHTML += posts.map(renderPost).join('');
-    }
-}
+const renderPost = generateRenderPostFn();
 
 const fetchPosts = generateFetchPostsFn('http://127.0.0.1:8000/posts');
 
 document.addEventListener('DOMContentLoaded', () => {
+
+    console.log(myGlobal);
 
     if (myGlobal.user){
         const divNewPost = document.querySelector('#new_post'); 
@@ -56,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
         newPostForm(false);
     }
 
-    fetchPosts().then(displayPosts);
+    fetchPosts()
+    .then(posts => displayPosts(posts, renderPost));
 
 })

@@ -11,7 +11,8 @@
       crossorigin="anonymous"
     />
     <link href="{% static 'network/styles.css' %}" rel="stylesheet" />
-    {% block script %} {% endblock %}
+    {% block script %}
+    {% endblock %}
   </head>
   <body>
     <nav
@@ -51,7 +52,7 @@
       </div>
     </nav>
 
-    <div class="body">
+    <div class="container">
       {% block user_info %}
       {% endblock %}
       

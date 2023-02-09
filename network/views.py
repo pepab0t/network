@@ -154,18 +154,20 @@ def like(request, post_id: int):
 
 @login_required
 def comment(request, post_id: int):
-
     if request.method == "POST":
         post = Post.objects.get(pk=post_id)
 
         text = request.POST.get("comment_text", None)
+
+        print(text)
+
         if text is None:
-            return HttpResponse(
-                "Missing argument `comment_text`", status=400, content_type="text/plain"
+            return JsonResponse(
+                {"error": "Missing argument `comment_text`"}, status=400
             )
         if text == "":
             return HttpResponse(
-                "Empty comment not allowed", status=400, content_type="text/plain"
+                {"error":"Empty comment not allowed"}, status=400
             )
 
         comment = Comment(post=post, user=request.user, text=text)
