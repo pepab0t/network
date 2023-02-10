@@ -37,7 +37,7 @@ def following_page(request):
 
 def posts(request):
     posts = Post.objects.order_by("-created")
-    return JsonResponse([post.to_dict() for post in posts], status=200, safe=False)
+    return JsonResponse([post.to_dict(request.user) for post in posts], status=200, safe=False)
 
 
 def user_posts(request, username: str):
@@ -47,7 +47,7 @@ def user_posts(request, username: str):
         return JsonResponse({"error": f"user {username} does not exist"}, status=404)
 
     posts = Post.objects.filter(user=user).order_by("-created").all()
-    return JsonResponse([post.to_dict() for post in posts], status=200, safe=False)
+    return JsonResponse([post.to_dict(request.user) for post in posts], status=200, safe=False)
 
 
 @login_required
@@ -56,7 +56,7 @@ def following_posts(request):
     users = User.objects.filter(followers__in=following)
     posts = Post.objects.filter(user__in=users).order_by("-created")
 
-    return JsonResponse([post.to_dict() for post in posts], status=200, safe=False)
+    return JsonResponse([post.to_dict(request.user) for post in posts], status=200, safe=False)
 
 
 @login_required
@@ -104,6 +104,58 @@ def follow(request, user_id: int):
             status=200,
         )
 
+def post_likes(request, post_id: int):
+    try:
+        post = Post.objects.get(pk=post_id)
+    except Post.DoesNotExist:
+        return render(request, "network/error.html", {
+            "title": "404 Post not Found",
+            "text": f"Post with id {post_id} not found"
+        })
+
+    likes = post.likes.all().order_by('-created')
+
+    return render(request, "network/list.html", {
+        "title": "Likes",
+        "items": likes,
+        "item_type": "likes"
+    })
+
+def user_followers(request, user_id: int):
+    try:
+        user = User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        return render(request, "network/error.html", {
+            "title": "404 Not Found",
+            "text": f"User {user_id} not found",
+        })
+
+    followers=user.followers.order_by('-created')
+
+    return render(request, "network/list.html", {
+        "title": f"{user.username}'s followers",
+        "items": followers,
+        "item_type": "followers"
+    })
+    
+
+def user_following(request, user_id: int):
+    try:
+        user = User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        return render(request, "network/error.html", {
+            "title": "404 Not Found",
+            "text": f"User {user_id} not found"
+        })
+
+    following = user.following.order_by('-created')
+
+    return render(request, "network/list.html", {
+        "title": f"{user.username} follows",
+        "items": following,
+        "item_type": "following"
+    })
+
 
 def user_detail(request, username: str):
     user = User.objects.filter(username=username).first()
@@ -126,13 +178,48 @@ def user_detail(request, username: str):
         status=200,
     )
 
+@login_required
+def delete_post(request, post_id: int):
+    if request.method == "DELETE":
+        try:
+            post = Post.objects.get(pk=post_id)
+        except Post.DoesNotExist:
+            return JsonResponse({"error": f"Post {post_id} does not exist"}, status=400)
+
+        if request.user != post.user:
+            return JsonResponse({"error": "You cannot delete post that isn't yours"}, status=403)
+
+        post.delete()
+        return JsonResponse({"message": f"post {post_id} successfully deleted"}, status=200)
+
+    return JsonResponse({"error": "Invalid method"},status=400)
+
+@login_required
+def delete_comment(request, comment_id: int):
+    if request.method == "DELETE":
+        try:
+            comment = Comment.objects.get(pk=comment_id)
+        except Comment.DoesNotExist:
+            return JsonResponse({"error": f"Comment {comment_id} does not exist"}, status=400)
+        if request.user != comment.user:
+            return JsonResponse({"error": "You cannot delete comment that isn't yours"}, status=403)
+
+        comment.delete()
+        return JsonResponse({"message": f"comment {comment_id} successfully deleted"}, status=200)
+
+    return JsonResponse({"error": "Invalid method"},status=400)
+    
+
 
 @login_required
 def like(request, post_id: int):
     if not request.method == 'POST':
         return JsonResponse({"error": "Invalid request method"}, status=400)
 
-    post = Post.objects.get(pk=post_id)
+    try:
+        post = Post.objects.get(pk=post_id)
+    except Post.DoesNotExist:
+        return JsonResponse({"error": f"Post {post_id} does not exist"}, status=400)
 
     like = Like.objects.filter(user=request.user, post=post).first()
     if like is None:
@@ -184,7 +271,10 @@ def comment(request, post_id: int):
 
 
 def get_comments(request, post_id: int):
-    post = Post.objects.get(pk=post_id)
+    try: 
+        post = Post.objects.get(pk=post_id)
+    except Post.DoesNotExist:
+        return JsonResponse({"error": f"Post {post_id} does not exist"}, status=404)
 
     comments = Comment.objects.filter(post=post).order_by("created")
 

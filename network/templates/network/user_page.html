@@ -3,10 +3,10 @@
 
 {% block user_info %}
     <h2>{{viewed_user.username}}</h2>
-    <div><p class="h6" id="followers">{{viewed_user.followers.count}} Followers</p></div>
-    <div><p class="h6" id="following">{{viewed_user.following.count}} Following</p></div>
+    <div><a class="h6" id="followers" href="{% url 'user_followers' viewed_user.id%}">{{viewed_user.followers.count}} Followers</a></div>
+    <div><a class="h6" id="following" href="{% url 'user_following' viewed_user.id%}">{{viewed_user.following.count}} Following</a></div>
     {% if user.is_authenticated and viewed_user != user%}
-        <button class="btn btn-primary" id="btn_follow">Follow</button>
+        <button class="btn btn-primary" id="btn_follow"></button>
     {% endif %}
     <hr>
 {% endblock %}

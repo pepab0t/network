@@ -1,0 +1,33 @@
+
+{% extends 'network/layout.html' %}
+
+{% block body %}
+    <h2>{{title}}</h2>
+    <div class="list-group">
+        
+        {% if item_type == 'likes' %}
+            {% for item in items %}
+                <li class="list-group-item">
+                    <a href="{% url 'user_page' item.user.username %}">{{item.user.username}}</a>
+                    <small class="float-right">{{item.created}}</small>
+                </li>
+            {% endfor %}
+        {% elif item_type == 'followers' %}
+            {% for item in items %}
+                <li class="list-group-item">
+                    <a href="{% url 'user_page' item.follower.username %}">{{item.follower.username}}</a>
+                    <small class="float-right">{{item.created}}</small>
+                </li>
+            {% endfor %}
+        {% elif item_type == 'following' %}
+            {% for item in items %}
+                <li class="list-group-item">
+                    <a href="{% url 'user_page' item.follows.username %}">{{item.follows.username}}</a>
+                    <small class="float-right">{{item.created}}</small>
+                </li>
+            {% endfor %}
+        {% else %}
+            Invalid item type
+        {% endif %}
+    </div>
+{% endblock %}

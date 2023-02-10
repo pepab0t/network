@@ -17,4 +17,10 @@ urlpatterns = [
     path("follow/<int:user_id>", views.follow, name="follow"),
     path("comment/<int:post_id>", views.comment, name="comment"),
     path("comments/<int:post_id>", views.get_comments, name="comments"),
+    path("delete_post/<int:post_id>", views.delete_post, name="delete_post"),
+    path("delete_comment/<int:comment_id>", views.delete_comment, name="delete_comment"),
+    path("like/<int:post_id>", views.like, name="like"),
+    path("post/<int:post_id>/likes", views.post_likes, name="post_likes"),
+    path("profile/<int:user_id>/followers", views.user_followers, name="user_followers"),
+    path("profile/<int:user_id>/following", views.user_following, name="user_following"),
 ]
