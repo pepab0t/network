@@ -2,9 +2,11 @@ import { displayPosts, generateFetchPostsFn, generateRenderPostFn } from "./util
 
 const renderPost = generateRenderPostFn();
 
-const fetchPosts = generateFetchPostsFn('http://127.0.0.1:8000/posts');
+const fetchPosts = generateFetchPostsFn(`${myGlobal.url}posts`);
 
 document.addEventListener('DOMContentLoaded', () => {
+
+    console.log(myGlobal);
 
     if (myGlobal.user){
         const divNewPost = document.querySelector('#new_post'); 
@@ -47,6 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
         newPostForm(false);
     }
+
+    console.log('asd');
 
     fetchPosts()
     .then(posts => displayPosts(posts, renderPost));

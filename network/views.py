@@ -13,7 +13,7 @@ def index(request):
     return render(
         request,
         "network/index.html",
-        {"script": "network/index.js", "title": "All posts"},
+        {"script": "network/index.js", "title": "All posts", "url": request.build_absolute_uri('/')},
     )
 
 
@@ -23,7 +23,7 @@ def user_page(request, username: str):
     if user is None:
         return JsonResponse({"error": f"user {username} does not exist"}, status=404)
 
-    return render(request, "network/user_page.html", {"viewed_user": user})
+    return render(request, "network/user_page.html", {"viewed_user": user, "url": request.build_absolute_uri('/')})
 
 
 @login_required
@@ -31,7 +31,7 @@ def following_page(request):
     return render(
         request,
         "network/index.html",
-        {"script": "network/following_page.js", "title": "Following"},
+        {"script": "network/following_page.js", "title": "Following", "url": request.build_absolute_uri('/')},
     )
 
 
@@ -118,7 +118,8 @@ def post_likes(request, post_id: int):
     return render(request, "network/list.html", {
         "title": "Likes",
         "items": likes,
-        "item_type": "likes"
+        "item_type": "likes",
+        "url": request.build_absolute_uri('/')
     })
 
 def user_followers(request, user_id: int):
@@ -127,7 +128,7 @@ def user_followers(request, user_id: int):
     except User.DoesNotExist:
         return render(request, "network/error.html", {
             "title": "404 Not Found",
-            "text": f"User {user_id} not found",
+            "text": f"User {user_id} not found", 
         })
 
     followers=user.followers.order_by('-created')
@@ -135,7 +136,8 @@ def user_followers(request, user_id: int):
     return render(request, "network/list.html", {
         "title": f"{user.username}'s followers",
         "items": followers,
-        "item_type": "followers"
+        "item_type": "followers",
+        "url": request.build_absolute_uri('/')
     })
     
 
@@ -153,7 +155,8 @@ def user_following(request, user_id: int):
     return render(request, "network/list.html", {
         "title": f"{user.username} follows",
         "items": following,
-        "item_type": "following"
+        "item_type": "following",
+        "url": request.build_absolute_uri('/')
     })
 
 
@@ -312,10 +315,10 @@ def login_view(request):
             return render(
                 request,
                 "network/login.html",
-                {"message": "Invalid username and/or password."},
+                {"message": "Invalid username and/or password.", "url": request.build_absolute_uri('/')},
             )
     else:
-        return render(request, "network/login.html")
+        return render(request, "network/login.html", {"url": request.build_absolute_uri('/')})
 
 
 def logout_view(request):
@@ -333,7 +336,7 @@ def register(request):
         confirmation = request.POST["confirmation"]
         if password != confirmation:
             return render(
-                request, "network/register.html", {"message": "Passwords must match."}
+                request, "network/register.html", {"message": "Passwords must match.", "url": request.build_absolute_uri('/')}
             )
 
         # Attempt to create new user
@@ -344,9 +347,9 @@ def register(request):
             user.save()
         except IntegrityError:
             return render(
-                request, "network/register.html", {"message": "Username already taken."}
+                request, "network/register.html", {"message": "Username already taken.", "url": request.build_absolute_uri('/')}
             )
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
     else:
-        return render(request, "network/register.html")
+        return render(request, "network/register.html", {"url": request.build_absolute_uri('/')})

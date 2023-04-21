@@ -6,10 +6,11 @@
         var myGlobal = {
             csrftoken: '{{csrf_token}}',
             url_new_post: "{% url 'new_post'%}",
+            url: '{{url}}',
             {% if user.is_authenticated %}
             user: '{{user}}'
             {% endif %}
-        } 
+        };
     </script>
     <script type="module" src="{% static script %}"></script>
 {% endblock %}

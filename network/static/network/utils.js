@@ -3,7 +3,7 @@ function renderComments(comments, postId, {user, csrftoken}) {
     const renderComment = (c) => {
         return `
         <div class='card-text'>
-            <span><a href="http://127.0.0.1:8000/profile/${c.user}">${c.user}</a>:</span>
+            <span><a href="${myGlobal.url}profile/${c.user}">${c.user}</a>:</span>
             <span>${c.text}</span>
             &emsp;
             <span><small>${c.created}</small></span>
@@ -36,7 +36,7 @@ function commentFormSubmit(form) {
         return false;
     }
 
-    fetch(`http://127.0.0.1:8000/comment/${form.dataset.post_id}`, {
+    fetch(`${myGlobal.url}comment/${form.dataset.post_id}`, {
         method: "POST",
         headers: {
             'X-CSRFToken': myGlobal.csrftoken,
@@ -54,7 +54,7 @@ function commentFormSubmit(form) {
 
 function commentButtonDelete(button){
     console.log(`deleting comment ${button.dataset.comment_id}`);
-    fetch(`http://127.0.0.1:8000/delete_comment/${button.dataset.comment_id}`, {
+    fetch(`${myGlobal.url}delete_comment/${button.dataset.comment_id}`, {
         method: 'DELETE',
         headers: {
             'X-CSRFToken': myGlobal.csrftoken
@@ -80,7 +80,7 @@ function createCommentSection(postId) {
     const divComments = document.querySelector(`#comments_post_${postId}`);
     divComments.innerHTML = "";
 
-    fetch(`http://127.0.0.1:8000/comments/${postId}`)
+    fetch(`${myGlobal.url}comments/${postId}`)
     .then(response => response.json())
     .then(comments => {
         divComments.innerHTML = renderComments(comments, postId, myGlobal);
@@ -103,12 +103,13 @@ export function displayPosts(posts, renderPost, postDivId = "posts"){
     } else {
         document.querySelector(`#${postDivId}`).innerHTML += posts.map(renderPost).join('');
     }
+    console.log(myGlobal.url);
  
     // add post delete buttons actions
     document.querySelectorAll('button[id*=btn_delete_]')
     .forEach( (button) => {
         button.onclick = () => {
-            fetch(`http://127.0.0.1:8000/delete_post/${button.dataset.post_id}`, {
+            fetch(`${myGlobal.url}delete_post/${button.dataset.post_id}`, {
                 method: "DELETE",
                 headers: {
                     "X-CSRFToken": myGlobal.csrftoken
@@ -143,7 +144,7 @@ export function displayPosts(posts, renderPost, postDivId = "posts"){
                 return;
             }
             button.onclick = () => {
-                fetch(`http://127.0.0.1:8000/like/${divElement.dataset.post_id}`, {
+                fetch(`${myGlobal.url}like/${divElement.dataset.post_id}`, {
                     method: "POST",
                     headers: {
                         "X-CSRFToken": myGlobal.csrftoken
@@ -172,7 +173,7 @@ export function generateRenderPostFn(){
             <div class="card-header container text-center">
                 <div class='row'>
                     <div class='col-md-auto'>
-                        <a href='http://127.0.0.1:8000/profile/${post.username}'>${post.username}</a>
+                        <a href='${myGlobal.url}profile/${post.username}'>${post.username}</a>
                         &emsp;
                         <small>${post.created}</small>
                     </div>
@@ -202,7 +203,7 @@ export function generateRenderPostFn(){
                 </div>
                 <div id='div_like_${post.id}' data-post_id=${post.id}>
                     ${(!userIsAuthor() & userAuthenticated(myGlobal.user)) ? `<button class="btn btn-primary" id="like">${ post.liked ? "Unlike":"Like" }</button>` : ''}
-                    <span id='like_count'><a href='http://127.0.0.1:8000/post/${post.id}/likes'>${post.likes} ${post.likes===1 ? 'like': 'likes'}</a></span>
+                    <span id='like_count'><a href='${myGlobal.url}post/${post.id}/likes'>${post.likes} ${post.likes===1 ? 'like': 'likes'}</a></span>
                 </div>
             </div>
         </div>

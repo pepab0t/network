@@ -123,4 +123,6 @@ USE_TZ = True
 STATIC_URL = "/static/"
 
 # host
-CORS_ALLOWED_ORIGINS = ["http://127.0.0.1:8000"]
+CORS_ALLOWED_ORIGINS = ["http://0.0.0.0:5000"]
+
+ALLOWED_HOSTS = ['192.168.200.127', 'localhost', '127.0.0.1']
