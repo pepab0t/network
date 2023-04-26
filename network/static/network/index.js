@@ -50,8 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
         newPostForm(false);
     }
 
-    console.log('asd');
-
     fetchPosts()
     .then(posts => displayPosts(posts, renderPost));
 

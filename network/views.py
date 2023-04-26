@@ -10,6 +10,7 @@ from .models import Comment, Follow, Like, Post, User
 
 
 def index(request):
+    print(request.build_absolute_uri('/'))
     return render(
         request,
         "network/index.html",
